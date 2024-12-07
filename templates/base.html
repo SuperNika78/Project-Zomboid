@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{% block title %} {% endblock %}</title>
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+
+    <!-- Custom Styles -->
+    <style>
+      body {
+        font-family: "Inter", sans-serif;
+      }
+    </style>
+  </head>
+  <body class="bg-gray-100">
+    <nav class="bg-white shadow-md p-4">
+      <div class="container mx-auto flex justify-between items-center">
+        <div class="flex items-center">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-server mr-2">
+            <rect width="20" height="8" x="2" y="2" rx="2" ry="2" />
+            <rect width="20" height="8" x="2" y="14" rx="2" ry="2" />
+            <line x1="6" x2="6.01" y1="6" y2="6" />
+            <line x1="6" x2="6.01" y1="18" y2="18" />
+          </svg>
+          <span class="text-xl font-bold">Zomboid Server Manager</span>
+        </div>
+        <div class="flex space-x-4">
+        </div>
+      </div>
+    </nav>
+
+    <main class="container mx-auto mt-8 px-4">
+      {% block content %}
+      {% endblock %}
+    </main>
+
+    <footer class="bg-white mt-8 py-4 shadow-md">
+      <div class="container mx-auto text-center text-gray-600">
+        <p>&copy; 2024 Zomboid Server Manager. All rights reserved.</p>
+      </div>
+    </footer>
+
+    <!-- Lucide Icons Initialization -->
+    <script>
+      lucide.createIcons();
+    </script>
+  </body>
+</html>

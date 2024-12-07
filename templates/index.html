@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% block title %}
+  {{title}}
+{% endblock %}
+
+{% block content %}
+<div class="bg-white shadow-lg rounded-lg p-8">
+  <h1 class="text-2xl font-bold mb-4">Welcome to Zomboid Server Manager</h1>
+  <p class="text-gray-600">Select a server to get started.</p>
+
+    <div class="bg-gray-50 p-4 rounded-lg border hover:shadow-md transition">
+      <h2 class="text-lg font-semibold mb-2">Server Manager</h2>
+      <p class="text-sm text-gray-500 mb-4">Manage currently servers</p>
+      <button class="w-full bg-green-500 text-white py-2 rounded hover:bg-green-600 transition"><a href="/server">View Server</a> </button>
+    </div>
+
+  </div>
+</div>
+{% endblock %}

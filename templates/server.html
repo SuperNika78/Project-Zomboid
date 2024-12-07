@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Server
+{% endblock %}
+
+{% block content %}
+<div class="p-6 bg-gray-100 min-h-screen">
+    <div class="max-w-4xl mx-auto bg-white shadow-lg rounded-lg p-8">
+        <h1 class="text-2xl font-bold mb-6 flex items-center">
+            <i class="mr-3 lucide lucide-server"></i> Project Zomboid Server Manager
+        </h1>
+
+        {# Server Status #}
+        <div class="mb-6 p-4 bg-gray-50 rounded-lg">
+            <h2 class="text-xl font-semibold mb-4">Server Status</h2>
+            <div class="flex justify-between items-center">
+                <div>
+                    <p>Status: {{ 'Running' if server.running else 'Stopped' }}</p>
+                    <p>Players: {{ server.player_count }}</p>
+                    <p>Uptime: {{ server.uptime }}</p>
+                </div>
+                <div class="flex space-x-2">
+                    <button 
+                        onclick="startServer()" 
+                        {% if server.running %}disabled{% endif %} 
+                        class="bg-green-500 text-white px-4 py-2 rounded flex items-center disabled:opacity-50">
+                        <i class="mr-2 lucide lucide-play"></i> Start Server
+                    </button>
+                    <button 
+                        onclick="stopServer()" 
+                        {% if not server.running %}disabled{% endif %} 
+                        class="bg-red-500 text-white px-4 py-2 rounded flex items-center disabled:opacity-50">
+                        <i class="mr-2 lucide lucide-power"></i> Stop Server
+                    </button>
+                    <button 
+                        onclick="restartServer()" 
+                        {% if not server.running %}disabled{% endif %} 
+                        class="bg-blue-500 text-white px-4 py-2 rounded flex items-center disabled:opacity-50">
+                        <i class="mr-2 lucide lucide-power"></i> Restart Server
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        {# Server Configuration #}
+        <form method="POST" action="#">
+            <div class="mb-6 p-4 bg-gray-50 rounded-lg">
+                <h2 class="text-xl font-semibold mb-4 flex items-center">
+                    <i class="mr-3 lucide lucide-settings"></i> Server Info
+                </h2>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block mb-2">Server IP</label>
+                        <input 
+                            type="text" 
+                            name="server_name" 
+                            value="{{ server.ip }}" 
+                            class="w-full p-2 border rounded" 
+                            disabled=""
+                        />
+                    </div>
+                    <div>
+                        <label class="block mb-2">Server Port</label>
+                        <input 
+                            type="text" 
+                            name="max_players" 
+                            value="{{ server.port }}" 
+                            class="w-full p-2 border rounded" 
+                            min="1" 
+                            max="32" 
+                            disabled=""
+                        />
+                    </div>                                   
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    function startServer() {
+        fetch("/server/start", { method: 'POST' })
+            .then(response => response.json())
+            .then(data => {
+                // Update page with new server status
+                location.reload();
+            });
+    }
+    
+    function stopServer() {
+        fetch("/server/stop", { method: 'POST' })
+            .then(response => response.json())
+            .then(data => {
+                // Update page with new server status
+                location.reload();
+            });
+    }
+
+    function restartServer() {
+        fetch("/server/restart", { method: 'POST' })
+            .then(response => response.json())
+            .then(data => {
+                // Update page with new server status
+                location.reload();
+            });
+    }
+    </script>
+{% endblock %}
