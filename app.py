@@ -7,7 +7,7 @@ import subprocess
 app = Flask(__name__)
 
 # Define Database Connection
-_DATABASE = os.getenv('DB_FILE_PATH')
+_DATABASE = "/home/pzuser/Zomboid/Saves/Multiplayer/servertest/players.db"
 
 def get_db_connection():
     conn = sqlite3.connect(_DATABASE)
