@@ -95,6 +95,8 @@
 
 <script>
     async function controlServer(action) {
+        const loadingScreen = document.getElementById('loading-screen');
+        
         try {
             // Show the loading screen
             loadingScreen.style.display = 'flex';
