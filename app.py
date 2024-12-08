@@ -31,7 +31,7 @@ def admin():
     server_info = {
         "ip": request.host.split(':')[0],
         "port": 16261,
-        "running": checkServerStatus(),
+        "running": isServerActive(),
         "player_count": getPlayerList()[0],
         "uptime":getServiceUptime('zomboid')
     }
@@ -43,7 +43,7 @@ def start(action):
     response = {
         "success": success,
         "action": action,
-        "running": checkServerStatus(),
+        "running": isServerActive(),
         "player_count": getPlayerList()[0],
         "uptime":getServiceUptime('zomboid')
     }
@@ -93,9 +93,9 @@ def serverSystemd(action: str, service_name: str):
             if action == 'is-active':
                 return result.stdout.strip() == "active"
             elif action == 'start':
-                return checkServerStatus() == True
+                return isServerActive() == True
             elif action == 'stop':
-                return checkServerStatus() == False
+                return isServerActive() == False
         except Exception as e:
             print(f"Error : {e}")
             return False
@@ -103,11 +103,11 @@ def serverSystemd(action: str, service_name: str):
         print(f"Please select the allowed action {', '.join(action_list)}")
         return False
 
-def checkServerStatus() -> bool:
+def isServerActive() -> bool:
     return serverSystemd('is-active', 'zomboid')
 
 def serverControl(action: str) -> bool:
-    status = checkServerStatus()
+    status = isServerActive()
     if action == 'start':
         if status == 'off':
              return serverSystemd('start', 'zomboid')
