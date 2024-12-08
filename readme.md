@@ -10,9 +10,9 @@ Tugas OS Server Teknik Komputer
 
 **Server Services Overview**
 Game Server (Project Zomboid)
-Web Server (NGINX)
+Web Server (GUNICORN)
 DNS Server (BIND9)
-Mail Server (Postfix + Dovecot)
+Reverse Proxy Server(NGINX)
 Monitoring Server (Prometheus + Grafana)
 
 
@@ -126,7 +126,63 @@ polkit.addRule(function(action, subject) {
 sudo systemctl restart polkit
 ```
 
+**Copy Source Code Website**
+```console
+# Install git
+sudo apt install git
 
+# Install pip dan venv
+sudo apt install python3-pip python3-venv
+
+# Download Source Code dari Repo
+git clone https://github.com/SuperNika78/Project-Zomboid.git
+
+# Pindah ke dalam repository
+cd /Project-Zomboid
+
+# Buat dan Jalankan Virtual Environment 
+python3 -m venv .
+source bin/activate
+
+# Install dependency yang dibutuhkan
+pip install -r requirements.txt
+
+# Web Server sudah otomatis terinstall melalui requirements.txt, web server yang digunakan adalah gunicorn
+# Jalankan Web Server. Port yang digunakan secara default adalah port 8000
+gunicorn app:app
+```
+
+**Setup NGINX Reverse Proxy**
+```console
+# Install NGINX
+sudo apt install nginx -y
+
+#  Unlink Default NGINX Site
+sudo unlink /etc/nginx/sites-enabled/default
+
+# Configure NGINX
+sudo nano /etc/nginx/sites-available/reverse-proxy
+server {
+    listen 80;
+    server_name localhost;
+    location / {
+        proxy_pass http://127.0.0.1:8000;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}
+
+# Link and Activate New Configuration File
+sudo ln -s /etc/nginx/sites-available/reverse-proxy /etc/nginx/sites-enabled/
+
+# Test configuration syntax
+sudo nginx -t
+
+# Restart NGINX
+sudo systemctl restart nginx
+```
 
 **DNS Server (BIND9)**
 ```console
@@ -142,15 +198,17 @@ sudo cp /etc/bind/db.local /etc/bind/db.domain
 ; BIND data file for local loopback interface
 ;
 $TTL    604800
-@       IN      SOA     mama.com. root.mama.com. (
+@       IN      SOA     zomboidku.com. root.zomboidku.com. (
                               2         ; Serial
                          604800         ; Refresh
                           86400         ; Retry
                         2419200         ; Expire
                          604800 )       ; Negative Cache TTL
 ;
-@       IN      NS      mama.com.
+@       IN      NS      zomboidku.com.
+@       IN      MX      10  mail.zomboidku.com.
 @       IN      A       192.168.18.203
+mail    IN      A       192.168.18.203
 www     IN      A       192.168.18.203
 
 # Edit file db.ip
@@ -158,15 +216,15 @@ www     IN      A       192.168.18.203
 ; BIND reverse data file for local loopback interface
 ;
 $TTL    604800
-@       IN      SOA     mama.com root.mama.com. (
+@       IN      SOA     zomboidku.com root.zomboidku.com. (
                               1         ; Serial
                          604800         ; Refresh
                           86400         ; Retry
                         2419200         ; Expire
                          604800 )       ; Negative Cache TTL
 ;
-@       IN      NS      mama.com
-203     IN      PTR     mama.com
+@       IN      NS      zomboidku.com
+203     IN      PTR     zomboidku.com
 
 # Edit named.conf.local
 //
@@ -177,7 +235,7 @@ $TTL    604800
 // organization
 //include "/etc/bind/zones.rfc1918";
 
-zone "mama.com"{
+zone "zomboidku.com"{
         type master;
         file "/etc/bind/db.domain";
 };
@@ -189,7 +247,32 @@ zone "18.168.192.in-addr.arpa"{
 
 # Selanjutnya, konfigurasi named.conf.option
 sudo nano /etc/bind/named.conf.option
+options {
+        directory "/var/cache/bind";
+
+        // If there is a firewall between you and nameservers you want
+        // to talk to, you may need to fix the firewall to allow multiple
+        // ports to talk.  See http://www.kb.cert.org/vuls/id/800113
+
+        // If your ISP provided one or more IP addresses for stable
+        // nameservers, you probably want to use them as forwarders.
+        // Uncomment the following block, and insert the addresses replacing
+        // the all-0's placeholder.
+
+        forwarders {
+        8.8.8.8;
+        };
+
+        //========================================================================
+        // If BIND logs error messages about the root key being expired,
+        // you will need to update your keys.  See https://www.isc.org/bind-keys
+        //========================================================================
+        dnssec-validation no;
+
+        listen-on-v6 { any; };
+};
 
 # Selanjutnya restart bind9
 sudo systemctl restart bind9.service
 ```
+
