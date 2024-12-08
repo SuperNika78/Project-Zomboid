@@ -3,6 +3,7 @@ import sqlite3
 from dotenv import load_dotenv
 import os
 import subprocess
+import re
 
 app = Flask(__name__)
 
@@ -21,23 +22,49 @@ def index():
 
 @app.route('/server')
 def admin():
-    total_player = getPlayerList()[0]
-    server_ip = request.host.split(':')[0]
-    is_active = checkServerStatus()
     server_info = {
-        "ip": server_ip,
+        "ip": request.host.split(':')[0],
         "port": 16261,
-        "is_running": is_active,
-        "player_count": total_player,
-        "uptime":1
+        "running": checkServerStatus(),
+        "player_count": getPlayerList()[0],
+        "uptime":getServiceUptime('zomboid')
     }
     return render_template('server.html', server = server_info)
 
 @app.post('/server/<action>')
 def start(action):
-    serverSystemd(action, 'zomboid')
-    return redirect('/server')
+    success = serverSystemd(action, 'zomboid')
+    response = {
+        "success": success,
+        "action": action,
+        "running": checkServerStatus(),
+        "player_count": getPlayerList()[0],
+        "uptime":getServiceUptime('zomboid')
+    }
+    return response, 200
 
+def getServiceUptime(service_name: str) -> str:
+    try:
+        # Run the systemctl status command
+        result = subprocess.run(
+            ['systemctl', 'status', service_name],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True
+        )
+        
+        if result.returncode != 0:
+            return f"Service {service_name} is not running or not found."
+        
+        # Search for the uptime in the command output
+        match = re.search(r'.*; (\d+.*) ago', result.stdout)
+        if match:
+            return match.group(1)  # Extract the uptime string
+        else:
+            return f"Could not determine uptime for {service_name}."
+
+    except Exception as e:
+        return f"Error: {str(e)}"
 
 # Function to Access Database or Systen Services
 def getPlayerList() -> int:

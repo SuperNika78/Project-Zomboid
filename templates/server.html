@@ -18,23 +18,23 @@
                 <div>
                     <p>Status: {{ 'Running' if server.running else 'Stopped' }}</p>
                     <p>Players: {{ server.player_count }}</p>
-                    <p>Uptime: {{ server.uptime }}</p>
+                    <p>Uptime: {{ server.uptime if server.running else '0'}}</p>
                 </div>
                 <div class="flex space-x-2">
                     <button 
-                        onclick="startServer()" 
+                        onclick="controlServer('start')" 
                         {% if server.running %}disabled{% endif %} 
                         class="bg-green-500 text-white px-4 py-2 rounded flex items-center disabled:opacity-50">
                         <i class="mr-2 lucide lucide-play"></i> Start Server
                     </button>
                     <button 
-                        onclick="stopServer()" 
+                        onclick="controlServer('stop')" 
                         {% if not server.running %}disabled{% endif %} 
                         class="bg-red-500 text-white px-4 py-2 rounded flex items-center disabled:opacity-50">
                         <i class="mr-2 lucide lucide-power"></i> Stop Server
                     </button>
                     <button 
-                        onclick="restartServer()" 
+                        onclick="controlServer('restart')" 
                         {% if not server.running %}disabled{% endif %} 
                         class="bg-blue-500 text-white px-4 py-2 rounded flex items-center disabled:opacity-50">
                         <i class="mr-2 lucide lucide-power"></i> Restart Server
@@ -79,31 +79,28 @@
 </div>
 
 <script>
-    function startServer() {
-        fetch("/server/start", { method: 'POST' })
-            .then(response => response.json())
-            .then(data => {
-                // Update page with new server status
-                location.reload();
+    async function controlServer(action) {
+        try {
+            const response = await fetch(`/server/${action}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
             });
+            const data = await response.json();
+            if (data.success) {
+                // Update the page dynamically
+                document.getElementById('server-status').innerText = data.running ? 'Running' : 'Stopped';
+                document.getElementById('player-count').innerText = data.player_count;
+                alert(`${action.charAt(0).toUpperCase() + action.slice(1)} action was successful.`);
+            } else {
+                alert(`Failed to perform ${action}.`);
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('An error occurred.');
+        }
     }
-    
-    function stopServer() {
-        fetch("/server/stop", { method: 'POST' })
-            .then(response => response.json())
-            .then(data => {
-                // Update page with new server status
-                location.reload();
-            });
-    }
+</script>
 
-    function restartServer() {
-        fetch("/server/restart", { method: 'POST' })
-            .then(response => response.json())
-            .then(data => {
-                // Update page with new server status
-                location.reload();
-            });
-    }
-    </script>
 {% endblock %}
