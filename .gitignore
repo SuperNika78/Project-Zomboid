@@ -4,3 +4,4 @@ Lib/*
 Scripts/*
 pyenv.cfg
 players.db
+test.py
