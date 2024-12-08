@@ -16,13 +16,13 @@
             <h2 class="text-xl font-semibold mb-4">Server Status</h2>
             <div class="flex justify-between items-center">
                 <div>
-                    <p>Status: {{ 'Running' if server.running else 'Stopped' }}</p>
-                    <p>Players: {{ server.player_count }}</p>
+                    <p>Status: <span id="server-status">{{ 'Running' if server.running else 'Stopped' }}</span></p>
+                    <p>Players: <span id="player-count">{{ server.player_count }}</span></p>
                     <p>Uptime: 
                         {% if server.running %}
                             <span id="uptime">Fetching...</span>
                         {% else %}
-                            <span id="uptime">Fetching...</span>
+                            -
                         {% endif %}
                     </p>
                 </div>
@@ -94,10 +94,22 @@
                 }
             });
             const data = await response.json();
+            console.log(data)
             if (data.success) {
                 // Update the page dynamically
                 document.getElementById('server-status').innerText = data.running ? 'Running' : 'Stopped';
                 document.getElementById('player-count').innerText = data.player_count;
+
+                // Update button states
+                if (data.running) {
+                    document.querySelector('[onclick="controlServer(\'start\')"]').disabled = true;
+                    document.querySelector('[onclick="controlServer(\'stop\')"]').disabled = false;
+                    document.querySelector('[onclick="controlServer(\'restart\')"]').disabled = false;
+                } else {
+                    document.querySelector('[onclick="controlServer(\'start\')"]').disabled = false;
+                    document.querySelector('[onclick="controlServer(\'stop\')"]').disabled = true;
+                    document.querySelector('[onclick="controlServer(\'restart\')"]').disabled = true;
+                }
                 alert(`${action.charAt(0).toUpperCase() + action.slice(1)} action was successful.`);
             } else {
                 alert(`Failed to perform ${action}.`);

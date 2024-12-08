@@ -60,7 +60,7 @@ def getServiceUptime(service_name: str) -> str:
         )
         
         if result.returncode != 0:
-            return f"Service {service_name} is not running or not found."
+            return "-"
         
         # Search for the uptime in the command output
         match = re.search(r'.*; (\d+.*) ago', result.stdout)
@@ -93,9 +93,9 @@ def serverSystemd(action: str, service_name: str):
             if action == 'is-active':
                 return result.stdout.strip() == "active"
             elif action == 'start':
-                return result.stdout.strip() == "active"
+                return checkServerStatus() == "active"
             elif action == 'stop':
-                return result.stdout.strip() == "inactive"
+                return checkServerStatus() == "inactive"
         except Exception as e:
             print(f"Error : {e}")
             return False
