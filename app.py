@@ -93,9 +93,9 @@ def serverSystemd(action: str, service_name: str):
             if action == 'is-active':
                 return result.stdout.strip() == "active"
             elif action == 'start':
-                return checkServerStatus() == "active"
+                return checkServerStatus() == True
             elif action == 'stop':
-                return checkServerStatus() == "inactive"
+                return checkServerStatus() == False
         except Exception as e:
             print(f"Error : {e}")
             return False
