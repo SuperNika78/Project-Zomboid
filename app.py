@@ -20,6 +20,12 @@ def get_db_connection():
 def index():
     return render_template('index.html', title='Project Zomboid')
 
+@app.route('/server/uptime')
+def get_uptime():
+    uptime = getServiceUptime('zomboid')  # Replace 'zomboid' with your service name
+    return {"uptime": uptime}, 200  # Return JSON with the uptime
+
+
 @app.route('/server')
 def admin():
     server_info = {

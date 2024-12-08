@@ -18,7 +18,13 @@
                 <div>
                     <p>Status: {{ 'Running' if server.running else 'Stopped' }}</p>
                     <p>Players: {{ server.player_count }}</p>
-                    <p>Uptime: {{ server.uptime if server.running else '0'}}</p>
+                    <p>Uptime: 
+                        {% if server.running %}
+                            <span id="uptime">Fetching...</span>
+                        {% else %}
+                            <span id="uptime">Fetching...</span>
+                        {% endif %}
+                    </p>
                 </div>
                 <div class="flex space-x-2">
                     <button 
@@ -101,6 +107,24 @@
             alert('An error occurred.');
         }
     }
+
+    async function updateUptime() {
+        try {
+            const response = await fetch('/server/uptime'); // Call the Flask endpoint
+            const data = await response.json();
+
+            // Update the uptime in the HTML
+            document.getElementById('uptime').innerText = data.uptime;
+        } catch (error) {
+            console.error('Error fetching uptime:', error);
+        }
+    }
+
+    // Update uptime every 5 seconds (5000 ms)
+    setInterval(updateUptime, 5000);
+
+    // Initial call to update uptime immediately on page load
+    updateUptime();
 </script>
 
 {% endblock %}
