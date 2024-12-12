@@ -4,6 +4,7 @@ from dotenv import load_dotenv
 import os
 import subprocess
 import re
+from. utils import auth_required
 
 app = Flask(__name__)
 
@@ -17,6 +18,7 @@ def get_db_connection():
 
 # Routing
 @app.route('/')
+@auth_required
 def index():
     return render_template('index.html', title='Project Zomboid')
 
@@ -27,6 +29,7 @@ def get_uptime():
 
 
 @app.route('/server')
+@auth_required
 def admin():
     server_info = {
         "ip": request.host.split(':')[0],
@@ -38,6 +41,7 @@ def admin():
     return render_template('server.html', server = server_info)
 
 @app.post('/server/<action>')
+@auth_required
 def start(action):
     success = serverSystemd(action, 'zomboid')
     response = {

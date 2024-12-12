@@ -9,12 +9,13 @@ Tugas OS Server Teknik Komputer
 
 
 **Server Services Overview**
+```
 Game Server (Project Zomboid)
 Web Server (GUNICORN)
 DNS Server (BIND9)
-Reverse Proxy Server(NGINX)
-Monitoring Server (Prometheus + Grafana)
-
+Reverse Proxy Server (NGINX)
+Firewall (UFW)
+```
 
 
 **Operating System**
@@ -276,3 +277,4 @@ options {
 sudo systemctl restart bind9.service
 ```
 
+**Install Promotheus**
