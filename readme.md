@@ -52,10 +52,6 @@ EOL
 export PATH=$PATH:/usr/games
 steamcmd +runscript $HOME/update_zomboid.txt
 
-# Firewall yang umum digunakan untuk membuka port di Linux adalah UFW (Uncomplication Firewall). Port yang dibuka untuk server ini adalah 16261/udp, 16262/udp
-sudo ufw allow 16261/udp
-sudo ufw allow 16262/udp
-sudo ufw reload
 
 # Selanjutnya saya akan menjalankan server melalui systemd. Sebelumnya jalankan terlebih dahulu servernya untuk membuat password admin
 cd /opt/pzserver/
@@ -125,6 +121,17 @@ polkit.addRule(function(action, subject) {
 
 # Restart Polkit
 sudo systemctl restart polkit
+```
+**Setup and Config UFW**
+```console
+# Install UFW Firewall
+sudo apt install ufw
+
+# Firewall yang umum digunakan untuk membuka port di Linux adalah UFW (Uncomplication Firewall). Port yang dibuka untuk server ini adalah 80/tcp, 16261/udp, 16262/udp
+sudo ufw allow 80/tcp
+sudo ufw allow 16261/udp
+sudo ufw allow 16262/udp
+sudo ufw reload
 ```
 
 **Copy Source Code Website**
