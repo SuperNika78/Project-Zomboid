@@ -9,12 +9,13 @@ Tugas OS Server Teknik Komputer
 
 
 **Server Services Overview**
+```
 Game Server (Project Zomboid)
 Web Server (GUNICORN)
 DNS Server (BIND9)
 Reverse Proxy Server(NGINX)
 Monitoring Server (Prometheus + Grafana)
-
+```
 
 
 **Operating System**
