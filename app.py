@@ -4,7 +4,7 @@ from dotenv import load_dotenv
 import os
 import subprocess
 import re
-from. utils import auth_required
+from utils import auth_required
 
 app = Flask(__name__)
 
