@@ -160,6 +160,11 @@ pip install -r requirements.txt
 gunicorn app:app
 ```
 
+**Tampilan Website**
+![image](https://github.com/user-attachments/assets/d6078045-c4d3-4999-8657-fe96e9599484)
+![image](https://github.com/user-attachments/assets/042d094c-b359-4cb9-8467-878cb28422db)
+
+
 **Setup NGINX Reverse Proxy**
 ```console
 # Install NGINX
@@ -284,4 +289,6 @@ options {
 sudo systemctl restart bind9.service
 ```
 
-**Install Promotheus**
+**Result**
+![image](https://github.com/user-attachments/assets/a77ad6e2-2702-4bfd-ae93-7a2bdc4cdf1f)
+![image](https://github.com/user-attachments/assets/e1ea73c0-18a6-485d-8ae6-ffbd4f8a5275)
