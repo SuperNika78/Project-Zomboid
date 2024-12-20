@@ -229,15 +229,15 @@ www     IN      A       192.168.18.203
 ; BIND reverse data file for local loopback interface
 ;
 $TTL    604800
-@       IN      SOA     zomboidku.com root.zomboidku.com. (
+@       IN      SOA     zomboidku.com. root.zomboidku.com. (
                               1         ; Serial
                          604800         ; Refresh
                           86400         ; Retry
                         2419200         ; Expire
                          604800 )       ; Negative Cache TTL
 ;
-@       IN      NS      zomboidku.com
-203     IN      PTR     zomboidku.com
+@       IN      NS      zomboidku.com.
+203     IN      PTR     zomboidku.com.
 
 # Edit named.conf.local
 //
